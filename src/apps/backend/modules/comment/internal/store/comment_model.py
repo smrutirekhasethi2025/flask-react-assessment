@@ -1,0 +1,30 @@
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+
+from bson import ObjectId
+
+from modules.application.base_model import BaseModel
+
+@dataclass
+class CommentModel(BaseModel):
+    account_id: str
+    task_id: str
+    content: str
+    created_at: Optional[datetime] = datetime.utcnow()
+    updated_at: Optional[datetime] = None
+
+    @classmethod
+    def from_bson(cls, bson_data: dict) -> "CommentModel":
+        return cls(
+            account_id=bson_data.get("account_id", ""),
+            task_id=bson_data.get("task_id", ""),
+            content=bson_data.get("content", ""),
+            id=str(bson_data.get("_id")) if bson_data.get("_id") else None,
+            created_at=bson_data.get("created_at"),
+            updated_at=bson_data.get("updated_at"),
+        )
+
+    @staticmethod
+    def get_collection_name() -> str:
+        return "comments"
